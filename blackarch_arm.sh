@@ -47,7 +47,7 @@ if [[ ! -f "${INT_BLACK}${IMG}" ]]; then
   mke2fs -F ${INT_BLACK}${IMG}
 fi
 
-if [[ -e "mknod ${LOOP} b 7 256" ]]; then
+if [[ ! -b "${LOOP}" ]]; then
   mknod ${LOOP} b 7 256
 fi
 losetup ${LOOP} ${INT_BLACK}${IMG}
@@ -107,4 +107,11 @@ echo ""
 echo "pacman -Syyu"
 echo "pacman -S gcc"
 echo "pacman -Sg | grep blackarch"
+echo "pacman -Sgg | grep blackarch | cut -d' ' -f2 | sort -u"
+
+alias p="cd ${INT_BLACK}"
+p
 chroot ${EXT_SDCARD} sh
+echo ""
+ls
+echo ""
