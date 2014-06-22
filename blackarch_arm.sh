@@ -109,8 +109,8 @@ echo "pacman -S gcc"
 echo "pacman -Sg | grep blackarch"
 echo "pacman -Sgg | grep blackarch | cut -d' ' -f2 | sort -u"
 
-alias p="cd ${INT_BLACK}"
-p
+alias blackarch="cd ${INT_BLACK}"
+blackarch
 chroot ${EXT_SDCARD} sh
 echo ""
 ls
