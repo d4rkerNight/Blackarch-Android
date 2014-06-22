@@ -5,7 +5,7 @@
 #
 # Prerequisites:
 #
-# 1] Format external sdcard (in my case ext2)
+# 1] Format external sdcard (ext2)
 # 2] Device rooted
 # 3] Busybox
 # 4] Blackarch arm (line 38): archlinuxarm.org/platforms
@@ -77,12 +77,6 @@ if [[ "${pacman}" != "Server" ]]; then
   echo "Server = ${MIRROR}/\$repo/os/\$arch" >> ${EXT_SDCARD}/etc/pacman.conf
 fi
 
-exit_chroot=$(tail -n 1 ${EXT_SDCARD}/etc/profile.d/locale.sh | awk '{print $1}')
-
-if [[ "${exit_chroot}" != "alias" ]]; then
-  echo "alias exit=\"sh /home/umount.sh && exit\"" >> ${EXT_SDCARD}/etc/profile.d/locale.sh
-fi
-
 if [[ ! -f ${INT_BLACK}${INT_UMOUNT} ]]; then
   echo "#!/bin/bash" >> ${INT_BLACK}${INT_UMOUNT}
   echo "umount ${EXT_SDCARD}/dev/pts" >> ${INT_BLACK}${INT_UMOUNT}
@@ -104,8 +98,8 @@ if [[ ! -f ${EXT_SDCARD}/home/${UMOUNT} ]]; then
 fi
 
 echo ""
-echo "Umount && exit:"
-echo "run: exit"
+echo "Umount && quit:"
+echo "run: quit"
 echo ""
 echo "pacman -Syyu"
 echo "pacman -S gcc"
@@ -114,7 +108,7 @@ echo "pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u"
 
 alias umblack="sh ${INT_BLACK}${INT_UMOUNT}"
 
-chroot ${EXT_SDCARD} sh
+chroot ${EXT_SDCARD} bash
 umblack
 echo ""
 echo "Umount blackarch Done!"
