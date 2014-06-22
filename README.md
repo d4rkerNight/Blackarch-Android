@@ -2,7 +2,7 @@ Blackarch-Android
 =================
 Prerequisites:
 
-1] Format external sdcard (ext2)
+1] Format external sdcard (i my case ext2)
 
 2] Device rooted
 
