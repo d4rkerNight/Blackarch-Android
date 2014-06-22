@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 ########################################
 #
 # Android blackarch: blackarch_arm.sh
@@ -77,6 +77,12 @@ if [[ "${pacman}" != "Server" ]]; then
   echo "Server = ${MIRROR}/\$repo/os/\$arch" >> ${EXT_SDCARD}/etc/pacman.conf
 fi
 
+exit_chroot=$(tail -n 1 ${EXT_SDCARD}/etc/profile.d/locale.sh | awk '{print $1}')
+
+if [[ "${exit_chroot}" != "alias" ]]; then
+  echo "alias exit=\"sh /home/umount.sh && exit\"" >> ${EXT_SDCARD}/etc/profile.d/locale.sh
+fi
+
 if [[ ! -f ${INT_BLACK}${INT_UMOUNT} ]]; then
   echo "#!/bin/bash" >> ${INT_BLACK}${INT_UMOUNT}
   echo "umount ${EXT_SDCARD}/dev/pts" >> ${INT_BLACK}${INT_UMOUNT}
@@ -98,20 +104,18 @@ if [[ ! -f ${EXT_SDCARD}/home/${UMOUNT} ]]; then
 fi
 
 echo ""
-echo "Mount proc && sysfs:"
-echo "sh /home/mount.sh"
-echo ""
-echo "Umount:"
-echo "sh /home/umount.sh"
+echo "Umount && exit:"
+echo "run: exit"
 echo ""
 echo "pacman -Syyu"
 echo "pacman -S gcc"
 echo "pacman -Sg | grep blackarch"
 echo "pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u"
 
-cd ${INT_BLACK}
+alias umblack="sh ${INT_BLACK}${INT_UMOUNT}"
 
 chroot ${EXT_SDCARD} sh
+umblack
 echo ""
-ls
+echo "Umount blackarch Done!"
 echo ""
