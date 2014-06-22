@@ -5,7 +5,7 @@
 #
 # Prerequisites:
 #
-# 1] Format external sdcard (ext2)
+# 1] Format external sdcard (in my case ext2)
 # 2] Device rooted
 # 3] Busybox
 # 4] Blackarch arm (line 38): archlinuxarm.org/platforms
