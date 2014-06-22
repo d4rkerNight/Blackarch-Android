@@ -97,6 +97,11 @@ if [[ ! -f ${EXT_SDCARD}/home/${UMOUNT} ]]; then
   echo "umount /proc/" >> ${EXT_SDCARD}/home/${UMOUNT}
 fi
 
+if [[ ! -f ${EXT_SDCARD}/.bashrc ]]; then
+  echo "sh /home/mount.sh" >> ${EXT_SDCARD}/.bashrc
+  echo "alias quit=\"sh /home/umount.sh && exit\"" >> ${EXT_SDCARD}/.bashrc
+fi
+
 echo ""
 echo "Umount && quit:"
 echo "run: quit"
