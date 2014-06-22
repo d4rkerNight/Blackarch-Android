@@ -107,7 +107,7 @@ echo ""
 echo "pacman -Syyu"
 echo "pacman -S gcc"
 echo "pacman -Sg | grep blackarch"
-echo "pacman -Sgg | grep blackarch | cut -d' ' -f2 | sort -u"
+echo "pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u"
 
 cd ${INT_BLACK}
 
