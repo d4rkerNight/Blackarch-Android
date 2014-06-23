@@ -1,5 +1,5 @@
 #!/bin/sh
-########################################
+################################################################
 #
 # Android blackarch: blackarch_arm.sh
 #
@@ -8,18 +8,20 @@
 # 1] Format external sdcard (in my case ext2)
 # 2] Device rooted
 # 3] Busybox
-# 4] Blackarch arm (line 38): archlinuxarm.org/platforms
+# 4] Blackarch arm (line 40): archlinuxarm.org/platforms
 # 5] Check mirror: blackarch.org/download.html#mirrors
 # 6] Run: busybox sh blackarch_arm.sh
 #
-# I haven't checked all the tools but the ones that I need work
-# eg: metasploit, nmap, ...
+# I haven't checked all the terminal tools but the ones
+# that I need work
+#
+# eg: metasploit, nmap, sqlmap, ...
 #
 # Tested on sgs3 SHV-E210K
 # 
 #
 # by tesla
-########################################
+###############################################################
 
 # check root priv
 if [ "$(busybox id -u)" != "0" ]; then
@@ -43,7 +45,7 @@ if [[ ! -d "${INT_BLACK}" ]]; then
 fi
 
 if [[ ! -f "${INT_BLACK}${IMG}" ]]; then
-  dd if=/dev/zero of=${INT_BLACK}${IMG} seek=10000000000 bs=1 count=1
+  dd if=/dev/zero of=${INT_BLACK}${IMG} seek=10000000000 bs=1 count=1 # seek=10G change has required
   mke2fs -F ${INT_BLACK}${IMG}
 fi
 
@@ -61,7 +63,7 @@ fi
 busybox mount -o bind /dev/ ${EXT_SDCARD}/dev/
 busybox mount -o bind /dev/pts/ ${EXT_SDCARD}/dev/pts/
 
-echo "nameserver 8.8.8.8" > ${EXT_SDCARD}/etc/resolv.conf
+echo "nameserver 8.8.8.8" > ${EXT_SDCARD}/etc/resolv.conf # 'nameserver' change has required
 
 profile=$(tail -n 1 ${EXT_SDCARD}/etc/profile | awk '{print $1}')
 
@@ -99,6 +101,10 @@ fi
 
 if [[ ! -f ${EXT_SDCARD}/.bashrc ]]; then
   echo "sh /home/mount.sh" >> ${EXT_SDCARD}/.bashrc
+  # list tools
+  echo "alias blacktools=\"pacman -Sgg | grep blackarch | cut -d ' ' 'f2 | sort -u\"" >> ${EXT_SDCARD}/.bashrc
+  # list category
+  echo "alias blackcats=\"pacman -Sg | grep blackarch\"" >> ${EXT_SDCARD}/.bashrc
   echo "alias quit=\"sh /home/umount.sh && exit\"" >> ${EXT_SDCARD}/.bashrc
 fi
 
@@ -108,8 +114,8 @@ echo "run: quit"
 echo ""
 echo "pacman -Syyu"
 echo "pacman -S gcc"
-echo "pacman -Sg | grep blackarch"
-echo "pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u"
+echo "pacman -Sg | grep blackarch \"alias = blackcats\""
+echo "pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u \"alias = blacktools\""
 
 alias umblack="sh ${INT_BLACK}${INT_UMOUNT}"
 
