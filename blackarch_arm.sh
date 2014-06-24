@@ -5,7 +5,7 @@
 #
 # Prerequisites:
 #
-# 1] Format external sdcard (in my case ext2)
+# 1] Format external sdcard (in my case - 7Gb ext3 : 8Gb fat32 approx)
 # 2] Device rooted
 # 3] Busybox
 # 4] Blackarch arm (line 40): archlinuxarm.org/platforms
@@ -30,8 +30,8 @@ if [ "$(busybox id -u)" != "0" ]; then
 fi
 clear
 
-EXT_SDCARD="/storage/extSdCard" # change as required
-INT_BLACK="/storage/sdcard0/blackarch/" # change as required
+EXT_SDCARD="/storage/UsbSdCardA" # ext3 change as required
+FAT_BLACK="/storage/extSdCard/blackarch/" # fat32 change has required
 IMG="arm_blackarch.img"
 LOOP="/dev/loop1337"
 MOUNT="mount.sh"
@@ -40,24 +40,24 @@ INT_UMOUNT="umount.sh"
 ARM="ArchLinuxARM-odroid-xu-latest.tar.gz" # change as required
 MIRROR="http://www.mirrorservice.org/sites/blackarch.org/blackarch" # change as required
 
-if [[ ! -d "${INT_BLACK}" ]]; then
-  mkdir ${INT_BLACK}
+if [[ ! -d "${FAT_BLACK}" ]]; then
+  mkdir ${FAT_BLACK}
 fi
 
-if [[ ! -f "${INT_BLACK}${IMG}" ]]; then
-  dd if=/dev/zero of=${INT_BLACK}${IMG} seek=10000000000 bs=1 count=1 # seek=10G change as required
-  mke2fs -F ${INT_BLACK}${IMG}
+if [[ ! -f "${FAT_BLACK}${IMG}" ]]; then
+  dd if=/dev/zero of=${FAT_BLACK}${IMG} # change as required
+  mke2fs -F ${FAT_BLACK}${IMG}
 fi
 
 if [[ ! -b "${LOOP}" ]]; then
   mknod ${LOOP} b 7 256
 fi
-losetup ${LOOP} ${INT_BLACK}${IMG}
-busybox mount -t ext2 ${LOOP} ${EXT_SDCARD}
+losetup ${LOOP} ${FAT_BLACK}${IMG}
+busybox mount -t ext3 ${LOOP} ${EXT_SDCARD}
 
-if [[ ! -f "${INT_BLACK}${ARM}" ]]; then
-  wget http://archlinuxarm.org/os/${ARM} -P ${INT_BLACK}
-  tar xzf ${INT_BLACK}ArchLinuxARM*.tar.gz -C ${EXT_SDCARD}
+if [[ ! -f "${FAT_BLACK}${ARM}" ]]; then
+  wget http://archlinuxarm.org/os/${ARM} -P ${FAT_BLACK}
+  tar xzf ${FAT_BLACK}ArchLinuxARM*.tar.gz -C ${EXT_SDCARD}
 fi
 
 busybox mount -o bind /dev/ ${EXT_SDCARD}/dev/
@@ -79,11 +79,11 @@ if [[ "${pacman}" != "Server" ]]; then
   echo "Server = ${MIRROR}/\$repo/os/\$arch" >> ${EXT_SDCARD}/etc/pacman.conf
 fi
 
-if [[ ! -f ${INT_BLACK}${INT_UMOUNT} ]]; then
-  echo "#!/bin/bash" >> ${INT_BLACK}${INT_UMOUNT}
-  echo "umount ${EXT_SDCARD}/dev/pts" >> ${INT_BLACK}${INT_UMOUNT}
-  echo "umount ${EXT_SDCARD}/dev" >> ${INT_BLACK}${INT_UMOUNT}
-  echo "umount ${EXT_SDCARD}" >> ${INT_BLACK}${INT_UMOUNT}
+if [[ ! -f ${FAT_BLACK}${INT_UMOUNT} ]]; then
+  echo "#!/bin/bash" >> ${FAT_BLACK}${INT_UMOUNT}
+  echo "umount ${EXT_SDCARD}/dev/pts" >> ${FAT_BLACK}${INT_UMOUNT}
+  echo "umount ${EXT_SDCARD}/dev" >> ${FAT_BLACK}${INT_UMOUNT}
+  echo "umount ${EXT_SDCARD}" >> ${FAT_BLACK}${INT_UMOUNT}
 fi
 
 if [[ ! -f ${EXT_SDCARD}/home/${MOUNT} ]]; then
@@ -117,9 +117,9 @@ echo "pacman -S gcc"
 echo "pacman -Sg | grep blackarch \"alias = blackcats\""
 echo "pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u \"alias = blacktools\""
 
-alias umblack="sh ${INT_BLACK}${INT_UMOUNT}"
+alias umblack="sh ${FAT_BLACK}${INT_UMOUNT}"
 
-chroot ${EXT_SDCARD} bash # "bash" change as required
+chroot ${EXT_SDCARD} bash "bash" change as required
 umblack
 echo ""
 echo "Umount blackarch Done!"
