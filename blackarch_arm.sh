@@ -45,7 +45,7 @@ if [[ ! -d "${INT_BLACK}" ]]; then
 fi
 
 if [[ ! -f "${INT_BLACK}${IMG}" ]]; then
-  dd if=/dev/zero of=${INT_BLACK}${IMG} bs=7168 count=1048576 # 7G change as required
+  dd if=/dev/zero of=${INT_BLACK}${IMG} bs=2048 count=1048576 # change has required
   mke2fs -F ${INT_BLACK}${IMG}
 fi
 
