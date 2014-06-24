@@ -15,7 +15,7 @@
 # I haven't checked all the terminal tools but the ones
 # that I need work
 #
-# eg: metasploit, nmap, sqlmap, ...
+# eg: msfconsole, nmap, sqlmap, ...
 #
 # Tested on sgs3 SHV-E210K
 # 
