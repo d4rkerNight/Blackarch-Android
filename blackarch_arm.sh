@@ -30,6 +30,7 @@ if [ "$(busybox id -u)" != "0" ]; then
 fi
 clear
 
+VOLUME="/dev/block/vold/179:17" # change as required
 EXT_SDCARD="/storage/UsbSdCardA" # ext3 change as required
 FAT_BLACK="/storage/extSdCard/blackarch/" # fat32 change has required
 IMG="arm_blackarch.img"
@@ -39,6 +40,10 @@ UMOUNT="umount.sh"
 INT_UMOUNT="umount.sh"
 ARM="ArchLinuxARM-odroid-xu-latest.tar.gz" # change as required
 MIRROR="http://www.mirrorservice.org/sites/blackarch.org/blackarch" # change as required
+
+if [[ mount|grep ${VOLUME} ]]; then
+  busybox mount ${VOLUME} ${EXT_SDCARD} # change as required
+fi
 
 if [[ ! -d "${FAT_BLACK}" ]]; then
   mkdir ${FAT_BLACK}
