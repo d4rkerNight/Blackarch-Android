@@ -119,7 +119,7 @@ echo "pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u \"alias = blacktoo
 
 alias umblack="sh ${FAT_BLACK}${INT_UMOUNT}"
 
-chroot ${EXT_SDCARD} bash "bash" change as required
+chroot ${EXT_SDCARD} bash # "bash" change as required
 umblack
 echo ""
 echo "Umount blackarch Done!"
