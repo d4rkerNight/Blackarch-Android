@@ -30,22 +30,22 @@ if [ "$(busybox id -u)" != "0" ]; then
 fi
 clear
 
-EXT_SDCARD="/storage/extSdCard" # change has required
-INT_BLACK="/storage/sdcard0/blackarch/" # change has required
+EXT_SDCARD="/storage/extSdCard" # change as required
+INT_BLACK="/storage/sdcard0/blackarch/" # change as required
 IMG="arm_blackarch.img"
 LOOP="/dev/loop1337"
 MOUNT="mount.sh"
 UMOUNT="umount.sh"
 INT_UMOUNT="umount.sh"
-ARM="ArchLinuxARM-odroid-xu-latest.tar.gz" # change has required
-MIRROR="http://www.mirrorservice.org/sites/blackarch.org/blackarch" # change has required
+ARM="ArchLinuxARM-odroid-xu-latest.tar.gz" # change as required
+MIRROR="http://www.mirrorservice.org/sites/blackarch.org/blackarch" # change as required
 
 if [[ ! -d "${INT_BLACK}" ]]; then
   mkdir ${INT_BLACK}
 fi
 
 if [[ ! -f "${INT_BLACK}${IMG}" ]]; then
-  dd if=/dev/zero of=${INT_BLACK}${IMG} seek=10000000000 bs=1 count=1 # seek=10G change has required
+  dd if=/dev/zero of=${INT_BLACK}${IMG} seek=10000000000 bs=1 count=1 # seek=10G change as required
   mke2fs -F ${INT_BLACK}${IMG}
 fi
 
@@ -63,7 +63,7 @@ fi
 busybox mount -o bind /dev/ ${EXT_SDCARD}/dev/
 busybox mount -o bind /dev/pts/ ${EXT_SDCARD}/dev/pts/
 
-echo "nameserver 8.8.8.8" > ${EXT_SDCARD}/etc/resolv.conf # 'nameserver' change has required
+echo "nameserver 8.8.8.8" > ${EXT_SDCARD}/etc/resolv.conf # 'nameserver' cange as required
 
 profile=$(tail -n 1 ${EXT_SDCARD}/etc/profile | awk '{print $1}')
 
@@ -119,7 +119,7 @@ echo "pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u \"alias = blacktoo
 
 alias umblack="sh ${INT_BLACK}${INT_UMOUNT}"
 
-chroot ${EXT_SDCARD} bash
+chroot ${EXT_SDCARD} bash # "bash" change as required
 umblack
 echo ""
 echo "Umount blackarch Done!"
