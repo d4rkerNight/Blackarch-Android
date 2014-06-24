@@ -63,7 +63,7 @@ fi
 busybox mount -o bind /dev/ ${EXT_SDCARD}/dev/
 busybox mount -o bind /dev/pts/ ${EXT_SDCARD}/dev/pts/
 
-echo "nameserver 8.8.8.8" > ${EXT_SDCARD}/etc/resolv.conf # 'nameserver' cange as required
+echo "nameserver 8.8.8.8" > ${EXT_SDCARD}/etc/resolv.conf # 'nameserver' change as required
 
 profile=$(tail -n 1 ${EXT_SDCARD}/etc/profile | awk '{print $1}')
 
