@@ -31,7 +31,7 @@ fi
 clear
 
 EXT_SDCARD="/storage/extSdCard" # change as required
-INT_BLACK="/storage/sdcard0/armblack/" # change has required
+INT_BLACK="/storage/sdcard0/armblack/" # change as required
 IMG="arm_blackarch.img"
 LOOP="/dev/loop1337"
 MOUNT="mount.sh"
@@ -45,7 +45,7 @@ if [[ ! -d "${INT_BLACK}" ]]; then
 fi
 
 if [[ ! -f "${INT_BLACK}${IMG}" ]]; then
-  dd if=/dev/zero of=${INT_BLACK}${IMG} bs=2048 count=1048576 # change has required
+  dd if=/dev/zero of=${INT_BLACK}${IMG} bs=2048 count=1048576 # change as required
   mke2fs -F ${INT_BLACK}${IMG}
 fi
 
