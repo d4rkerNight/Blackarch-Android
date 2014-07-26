@@ -101,7 +101,7 @@ fi
 if [[ ! -f ${EXT_SDCARD}/.bashrc ]]; then
   echo "sh /home/mount.sh" >> ${EXT_SDCARD}/.bashrc
   echo "alias ls=\"ls --color -hal \"" >> ${EXT_SDCARD}/.bashrc
-  echo "alias grep=\"grep --color \" >> ${EXT_SDCARD}/.bashrc
+  echo "alias grep=\"grep --color \"" >> ${EXT_SDCARD}/.bashrc
   # list tools
   echo "alias blacktools=\"pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u\"" >> ${EXT_SDCARD}/.bashrc
   # list category
