@@ -1,7 +1,7 @@
 #!/bin/sh
 ################################################################
 #
-# Android blackarch: blackarch_arm.sh
+# Android blackarch: busybox sh blackarch_arm.sh
 #
 # Prerequisites:
 #
@@ -10,7 +10,7 @@
 # 3] Busybox
 # 4] Blackarch arm (line 40): archlinuxarm.org/platforms
 # 5] Check mirror: blackarch.org/download.html#mirrors
-# 6] Run: busybox sh blackarch_arm.sh
+# 6] Run: sh blackarch_arm.sh
 #
 # I haven't checked all the terminal tools but the ones
 # that I need work
@@ -18,7 +18,7 @@
 # eg: msfconsole, nmap, sqlmap, ...
 #
 # Tested on sgs3 SHV-E210K
-# 
+#
 #
 # by tesla
 ###############################################################
@@ -30,38 +30,34 @@ if [ "$(busybox id -u)" != "0" ]; then
 fi
 clear
 
-EXT_SDCARD="/storage/extSdCard" # change as required
-INT_BLACK="/storage/sdcard0/armblack/" # change as required
-IMG="arm_blackarch.img"
-LOOP="/dev/loop1337"
-MOUNT="mount.sh"
-UMOUNT="umount.sh"
-INT_UMOUNT="umount.sh"
-ARM="ArchLinuxARM-odroid-xu-latest.tar.gz" # change as required
-MIRROR="http://www.mirrorservice.org/sites/blackarch.org/blackarch" # change as required
+# change as required
+EXT_SDCARD="/storage/extSdCard"
+INT_BLACK="/storage/sdcard0/blackarch/"
+MOUNT="/dev/block/mmcblk1p1"
+MNT="mount.sh"
+UMNT="umount.sh"
+INT_UMNT="umount.sh"
+ARM="ArchLinuxARM-odroid-xu-latest.tar.gz"
+MIRROR="http://www.mirrorservice.org/sites/blackarch.org/blackarch"
 
 if [[ ! -d "${INT_BLACK}" ]]; then
   mkdir ${INT_BLACK}
 fi
 
-if [[ ! -f "${INT_BLACK}${IMG}" ]]; then
-  dd if=/dev/zero of=${INT_BLACK}${IMG} bs=2048 count=1048576 # change as required
-  mke2fs -F ${INT_BLACK}${IMG}
+mountpoint -q ${EXT_SDCARD}                                                
+if [[ ! $? -eq 0 ]]; then
+  mount -o rw -t ext3 ${MOUNT} ${EXT_SDCARD}
 fi
 
-if [[ ! -b "${LOOP}" ]]; then
-  mknod ${LOOP} b 7 256
-fi
-losetup ${LOOP} ${INT_BLACK}${IMG}
-busybox mount -t ext3 ${LOOP} ${EXT_SDCARD}
-
-if [[ ! -f "${INT_BLACK}${ARM}" ]]; then
-  wget http://archlinuxarm.org/os/${ARM} -P ${INT_BLACK}
+if [[ ! -f "${EXT_SDCARD}/.bash_history" ]]; then
+  if [[ ! -f ${INT_BLACK}${ARM} ]]; then                           
+    wget http://archlinuxarm.org/os/${ARM} -P ${INT_BLACK}         
+  fi
   tar xzf ${INT_BLACK}ArchLinuxARM*.tar.gz -C ${EXT_SDCARD}
 fi
 
-busybox mount -o bind /dev/ ${EXT_SDCARD}/dev/
-busybox mount -o bind /dev/pts/ ${EXT_SDCARD}/dev/pts/
+mount -o bind /dev/ ${EXT_SDCARD}/dev/
+mount -o bind /dev/pts/ ${EXT_SDCARD}/dev/pts/
 
 echo "nameserver 8.8.8.8" > ${EXT_SDCARD}/etc/resolv.conf # 'nameserver' change as required
 
@@ -79,28 +75,33 @@ if [[ "${pacman}" != "Server" ]]; then
   echo "Server = ${MIRROR}/\$repo/os/\$arch" >> ${EXT_SDCARD}/etc/pacman.conf
 fi
 
-if [[ ! -f ${INT_BLACK}${INT_UMOUNT} ]]; then
-  echo "#!/bin/bash" >> ${INT_BLACK}${INT_UMOUNT}
-  echo "umount ${EXT_SDCARD}/dev/pts" >> ${INT_BLACK}${INT_UMOUNT}
-  echo "umount ${EXT_SDCARD}/dev" >> ${INT_BLACK}${INT_UMOUNT}
-  echo "umount ${EXT_SDCARD}" >> ${INT_BLACK}${INT_UMOUNT}
+if [[ ! -f ${INT_BLACK}${INT_UMNT} ]]; then
+  echo "#!/bin/bash" >> ${INT_BLACK}${INT_UMNT}
+  echo "umount ${EXT_SDCARD}/dev/pts" >> ${INT_BLACK}${INT_UMNT}
+  echo "umount ${EXT_SDCARD}/dev" >> ${INT_BLACK}${INT_UMNT}
+  echo "umount ${EXT_SDCARD}" >> ${INT_BLACK}${INT_UMNT}
 fi
 
-if [[ ! -f ${EXT_SDCARD}/home/${MOUNT} ]]; then
-  echo "#!/bin/bash" >> ${EXT_SDCARD}/home/${MOUNT}
-  echo "mount -t proc proc /proc/" >> ${EXT_SDCARD}/home/${MOUNT}
-  echo "mount -t sysfs sysfs /sys/" >> ${EXT_SDCARD}/home/${MOUNT}
-  echo "source /etc/profile" >> ${EXT_SDCARD}/home/${MOUNT}
+if [[ ! -f ${EXT_SDCARD}/home/${MNT} ]]; then
+  echo "#!/bin/bash" > ${EXT_SDCARD}/home/${MNT}
+  echo "mountpoint -q /proc" >> ${EXT_SDCARD}/home/${MNT}
+  echo "if [[ ! $? -eq 0 ]]; then" >> ${EXT_SDCARD}/home/${MNT}
+  echo "  mount -t proc proc /proc/" >> ${EXT_SDCARD}/home/${MNT}
+  echo "  mount -t sysfs sysfs /sys/" >> ${EXT_SDCARD}/home/${MNT}
+  echo "fi" >> ${EXT_SDCARD}/home/${MNT}
+  echo "source /etc/profile" >> ${EXT_SDCARD}/home/${MNT}
 fi
 
-if [[ ! -f ${EXT_SDCARD}/home/${UMOUNT} ]]; then
-  echo "#!/bin/bash" >> ${EXT_SDCARD}/home/${UMOUNT}
-  echo "umount /sys/" >> ${EXT_SDCARD}/home/${UMOUNT}
-  echo "umount /proc/" >> ${EXT_SDCARD}/home/${UMOUNT}
+if [[ ! -f ${EXT_SDCARD}/home/${UMNT} ]]; then
+  echo "#!/bin/bash" >> ${EXT_SDCARD}/home/${UMNT}
+  echo "umount /sys/" >> ${EXT_SDCARD}/home/${UMNT}
+  echo "umount /proc/" >> ${EXT_SDCARD}/home/${UMNT}
 fi
 
 if [[ ! -f ${EXT_SDCARD}/.bashrc ]]; then
   echo "sh /home/mount.sh" >> ${EXT_SDCARD}/.bashrc
+  echo "alias ls=\"ls --color -hal \"" >> ${EXT_SDCARD}/.bashrc
+  echo "alias grep=\"grep --color \" >> ${EXT_SDCARD}/.bashrc
   # list tools
   echo "alias blacktools=\"pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u\"" >> ${EXT_SDCARD}/.bashrc
   # list category
@@ -117,9 +118,9 @@ echo "pacman -S gcc"
 echo "pacman -Sg | grep blackarch \"alias = blackcats\""
 echo "pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u \"alias = blacktools\""
 
-alias umblack="sh ${INT_BLACK}${INT_UMOUNT}"
+alias umblack="sh ${INT_BLACK}${INT_UMNT}"
 
-chroot ${EXT_SDCARD} bash # "bash" change as required
+chroot ${EXT_SDCARD} bash
 umblack
 echo ""
 echo "Umount blackarch Done!"
