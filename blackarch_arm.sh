@@ -1,7 +1,7 @@
 #!/bin/sh
 ################################################################
 #
-# Android blackarch: busybox sh blackarch_arm.sh
+# Android blackarch: blackarch_arm.sh
 #
 # Prerequisites:
 #
@@ -10,7 +10,7 @@
 # 3] Busybox
 # 4] Blackarch arm (line 40): archlinuxarm.org/platforms
 # 5] Check mirror: blackarch.org/download.html#mirrors
-# 6] Run: sh blackarch_arm.sh
+# 6] Run: busybox sh  blackarch_arm.sh
 #
 # I haven't checked all the terminal tools but the ones
 # that I need work
