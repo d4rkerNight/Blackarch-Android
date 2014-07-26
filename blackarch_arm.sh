@@ -114,7 +114,7 @@ echo "Umount && quit:"
 echo "run: quit"
 echo ""
 echo "pacman -Syyu"
-echo "pacman -S gcc"
+echo "pacman -S base-devel"
 echo "pacman -Sg | grep blackarch \"alias = blackcats\""
 echo "pacman -Sgg | grep blackarch | cut -d ' ' -f2 | sort -u \"alias = blacktools\""
 
